@@ -1,0 +1,94 @@
+﻿.ww1
+{
+	width: 160px;
+	background-color: #D1E7FC;
+	border-top: 1px solid #9EC9EC;
+	border-left: 1px solid #9EC9EC;
+}
+.ww1 td
+{
+	border-right: 1px solid #9EC9EC;
+	border-bottom: 1px solid #9EC9EC;
+	height: 28px;
+	text-align: center;
+	width: 125px;
+	font-size: 12px;
+	cursor: pointer;
+}
+.ww1 td.s
+{
+	border-bottom: 1px solid #FFFFFF;
+	font-weight: bold;
+	background-color: #FFFFFF;
+}
+.ww2
+{
+	width: 160px;
+	border-right: 1px solid #9EC9EC;
+	border-top: none;
+	border-left: 1px solid #9EC9EC;
+	border-bottom: 1px solid #9EC9EC;
+	font-size: 12px;
+}
+.ww2 a:link
+{
+	color: #00007f;
+	text-decoration: none;
+}
+.ww2 a:visited
+{
+	color: #800080;
+	text-decoration: none;
+}
+.ww2 a:hover
+{
+	color: #00007f;
+	text-decoration: underline;
+}
+.ww2 a:active
+{
+	color: #00007f;
+	text-decoration: underline;
+}
+#butong_net1
+{
+	vertical-align:top;
+	height:100%;
+}
+
+.dis
+{
+	display: block; 
+}
+.undis
+{
+	display: none; 
+}
+
+ul
+{
+	vertical-align:top;
+}
+
+li
+{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: list-item;
+	text-align: left;
+}
+li p
+{
+	margin: 0;
+	width: 120px;
+	float:left;
+	white-space:nowrap; 
+}
+li input[type="button"]
+{
+	float:left;
+	width:25px;
+}
+
+ 

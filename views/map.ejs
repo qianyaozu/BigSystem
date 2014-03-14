@@ -1,0 +1,379 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>煤矿安全卫士图形系统</title>
+    <link href="/stylesheets/main.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/tabcontrol.css" rel="stylesheet" type="text/css" />
+    <script src="/javascripts/mapjs/jquery-2.1.0.js" type="text/javascript"></script>
+   <script src="/javascripts/mapjs/json2.js" type="text/javascript"></script>
+   <script src="/javascripts/mapjs/model.js" type="text/javascript"></script>
+   <script src="/javascripts/mapjs/commonMethod.js" type="text/javascript"></script>
+   <script src="/javascripts/mapjs/Spirits.js" type="text/javascript"></script>
+   <script src="/javascripts/mapjs/Director.js" type="text/javascript"></script>
+   <script src="/javascripts/mapjs/main.js" type="text/javascript"></script>
+   <script src="/javascripts/mapjs/zDrag.js" type="text/javascript"></script>
+   <script src="/javascripts/mapjs/queryMethod.js" type="text/javascript"></script>
+    <script src="/javascripts/mapjs/ipandport.js" type="text/javascript"></script>
+</head>
+<body>
+<canvas id="can">你的浏览器不支持HTML5</canvas>
+<div class="leftTopDiv">
+    <select onchange="ChangeStationVisible();" id="stationType">
+        <option value="0">全部分站</option>
+        <option value="1">128分站</option>
+        <option value="2">70分站</option>
+    </select>
+    <button id="btnmode"    onclick="ChangeMode();"  >配置</button>
+    <button onclick="enlarge();"> +</button>
+    <button onclick="decrease();"> -</button>
+</div>
+<div class="leftTopDiv">
+</div>
+<!-- 删除分站，点，线层 -->
+<div id="deleteDiv" style="position: absolute; display: none; z-index: 100;">
+    <input type="button" style="border: 1px solid :#666666; height: 18px; width: 60px;
+            font-size: 9pt; background-color: #E8E8FF; color: #666666" value="删除" onclick="removeobject();" />
+</div>
+<!--分站配置层-->
+<div id="_DialogDiv_Station" style="z-index: 9001; position: absolute; top: 100px;
+        left: 10px; display: block;">
+    <table id="_DialogTable_0" width="180" cellspacing="0" cellpadding="0" border="0"
+           onselectstart="return false;" style="-moz-user-select: none; font-size: 12px;
+            line-height: 1.4;">
+        <tbody>
+        <tr id="_Draghandle_0" style="cursor: move;" onmousedown="drags('_DialogDiv_Station',event);">
+            <td width="13" height="33" style="background-image: url(/images/dialog_lt.png) !important;
+                        background: url(/images/dialog_lt.gif) no-repeat 0 0;">
+                <div style="width: 13px;">
+                </div>
+            </td>
+            <td height="33" style="background-image: url(/images/dialog_ct.png) !important;
+                        background: url(/images/dialog_ct.gif) repeat-x top;">
+                <div style="padding: 9px 0 0 4px; float: left; font-weight: bold; color: #fff;">
+                    <img style="vertical-align: top;" src="/images/icon_dialog.gif" /><span id="_Title_0">分站配置</span></div>
+                <div onclick="toggleLayer('_DialogDiv_Station');" onmouseout="this.style.backgroundImage='url(/images/dialog_closebtn.gif)'"
+                     onmouseover="this.style.backgroundImage='url(/images/dialog_closebtn_over.gif)'"
+                     style="margin-top: 5px; position: relative; cursor: pointer; float: right; height: 17px;
+                            width: 28px; background-image: url(/images/dialog_closebtn.gif);">
+                </div>
+            </td>
+            <td width="13" height="33" style="background-image: url(/images/dialog_rt.png) !important;
+                        background: url(/images/dialog_rt.gif) no-repeat right 0;">
+                <div style="width: 13px;">
+                    <a id="_forTab_0" href="#;"></a>
+                </div>
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="13" style="background-image: url(/images/dialog_mlm.png) !important;
+                        background: url(/images/dialog_mlm.gif) repeat-y left;">
+            </td>
+            <td align="center">
+                <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff">
+                    <tbody>
+                    <tr>
+                        <td valign="top" align="center" style="padding-top: 5px;">
+                            <div id="_Container_0" style="position: relative; width: 180px; height: 420px;">
+                                <div style="position: absolute; height: 100%; width: 100%; display: none; background-color: #fff;
+                                                opacity: 0.5;" id="_Covering_0">
+                                    &nbsp;
+                                </div>
+                                <table border="0" cellpadding="0" cellspacing="0" class="ww1">
+                                    <tr>
+                                        <td class="s" onmouseover="butong_net(this,'butong_net1')">
+                                            待选分站
+                                        </td>
+                                        <td onmouseover="butong_net(this,'butong_net1')">
+                                            已选分站
+                                        </td>
+                                    </tr>
+                                </table>
+                                <table border="0" cellpadding="0" cellspacing="0" class="ww2">
+                                    <tr>
+                                        <td height="300">
+                                            <div id="butong_net1">
+                                                <div class="dis" name="f" style="overflow: none;" id="disdiv">
+                                                    <ul id="unullist" runat="server" style="overflow-x: hidden; overflow-y: auto; height: 300px;">
+                                                    </ul>
+                                                </div>
+                                                <div class="undis" name="f" style="overflow: auto;">
+                                                    <ul id="ullist" style="overflow-x: hidden; overflow-y: auto; height: 300px;">
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <td colspan="2">
+                                            <hr />
+                                        </td>
+                                    </tr>
+                                    <tr style="height: 20px;">
+                                        <td style="height: 20px; width: 50%; vertical-align: middle; padding: 0; text-align: center;">
+                                            <input type="checkbox" id="Checkbox1" onclick="beginpaint(this);" />画轨迹线
+                                        </td>
+                                        <td style="height: 20px; width: 50%; vertical-align: middle; padding: 0; text-align: center;">
+                                            <input type="button" value="保存" onclick="Save();" />
+                                            <!--  <input type="checkbox" id="Checkbox2" />连续画线 -->
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+            <td width="13" style="background-image: url(/images/dialog_mrm.png) !important;
+                        background: url(/images/dialog_mrm.gif) repeat-y right;">
+            </td>
+        </tr>
+        <tr>
+            <td width="13" height="13" style="background-image: url(/images/dialog_lb.png) !important;
+                        background: url(/images/dialog_lb.gif) no-repeat 0 bottom;">
+            </td>
+            <td style="background-image: url(/images/dialog_cb.png) !important; background: url(/images/dialog_cb.gif) repeat-x bottom;">
+            </td>
+            <td width="13" height="13" style="background-image: url(/images/dialog_rb.png) !important;
+                        background: url(/images/dialog_rb.gif) no-repeat right bottom;">
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<!--底图配置层-->
+<div id="layerDia" style="z-index: 9001; position: absolute; top: 25px; left: 10px;">
+    <table id="Table1" width="300" cellspacing="0" cellpadding="0" border="0" onselectstart="return false;"
+           style="-moz-user-select: none; font-size: 12px; line-height: 1.4;">
+        <tbody>
+        <tr id="_Draghandle_1" onmousedown="drags('layerDia',event);" style="cursor: move;" >
+            <td width="13" height="33" style="background-image: url(/images/dialog_lt.png) !important;
+                        background: url(/images/dialog_lt.gif) no-repeat 0 0;">
+                <div style="width: 13px;">
+                </div>
+            </td>
+            <td height="33" style="background-image: url(/images/dialog_ct.png) !important;
+                        background: url(/images/dialog_ct.gif) repeat-x top;">
+                <div style="padding: 9px 0 0 4px; float: left; font-weight: bold; color: #fff;">
+                    <img style="vertical-align: top;" src="/images/icon_dialog.gif" /><span id="Span1">图层配置</span></div>
+                <div onclick="toggleLayer('layerDia');" onmouseout="this.style.backgroundImage='url(/images/dialog_closebtn.gif)'"
+                     onmouseover="this.style.backgroundImage='url(/images/dialog_closebtn_over.gif)'"
+                     style="margin-top: 5px; position: relative; cursor: pointer; float: right; height: 17px;
+                            width: 28px; background-image: url(/images/dialog_closebtn.gif);">
+                </div>
+            </td>
+            <td width="13" height="33" style="background-image: url(/images/dialog_rt.png) !important;
+                        background: url(/images/dialog_rt.gif) no-repeat right 0;">
+                <div style="width: 13px;">
+                    <a id="A1" href="#;"></a>
+                </div>
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="13" style="background-image: url(/images/dialog_mlm.png) !important;
+                        background: url(/images/dialog_mlm.gif) repeat-y left;">
+            </td>
+            <td align="center">
+                <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff">
+                    <tbody>
+                    <tr>
+                        <td valign="top" align="center" style="padding-top: 5px;">
+                            <div id="Div2" style="position: relative; width: 300px; height: 30px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input type="file" name="fileToUpload" id="fileToUpload" />
+                                        </td>
+                                        <td>
+                                            <input type="button" value="上传" onclick="uploadFile()" />
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+            <td width="13" style="background-image: url(/images/dialog_mrm.png) !important;
+                        background: url(/images/dialog_mrm.gif) repeat-y right;">
+            </td>
+        </tr>
+        <tr>
+            <td width="13" height="13" style="background-image: url(/images/dialog_lb.png) !important;
+                        background: url(/images/dialog_lb.gif) no-repeat 0 bottom;">
+            </td>
+            <td style="background-image: url(/images/dialog_cb.png) !important; background: url(/images/dialog_cb.gif) repeat-x bottom;">
+            </td>
+            <td width="13" height="13" style="background-image: url(/images/dialog_rb.png) !important;
+                        background: url(/images/dialog_rb.gif) no-repeat right bottom;">
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<!--历史轨迹层-->
+<div id="HisDiv" style="z-index: 9001; position: absolute; top: 100px; left: 10px;
+        display: none;">
+    <table id="Table2" width="250" cellspacing="0" cellpadding="0" border="0" onselectstart="return false;"
+           style="-moz-user-select: none; font-size: 12px; line-height: 1.4;">
+        <tbody>
+        <tr id="Tr1" style="cursor: move;" onmousedown="drags('HisDiv',event);">
+            <td width="13" height="33" style="background-image: url(/images/dialog_lt.png) !important;
+                        background: url(/images/dialog_lt.gif) no-repeat 0 0;">
+                <div style="width: 13px;">
+                </div>
+            </td>
+            <td height="33" style="background-image: url(/images/dialog_ct.png) !important;
+                        background: url(/images/dialog_ct.gif) repeat-x top;">
+                <div style="padding: 9px 0 0 4px; float: left; font-weight: bold; color: #fff;">
+                    <img style="vertical-align: top;" src="/images/icon_dialog.gif" /><span id="Span2">历史轨迹</span></div>
+                <div onclick="toggleLayer('HisDiv');" onmouseout="this.style.backgroundImage='url(/images/dialog_closebtn.gif)'"
+                     onmouseover="this.style.backgroundImage='url(/images/dialog_closebtn_over.gif)'"
+                     style="margin-top: 5px; position: relative; cursor: pointer; float: right; height: 17px;
+                            width: 28px; background-image: url(/images/dialog_closebtn.gif);">
+                </div>
+            </td>
+            <td width="13" height="33" style="background-image: url(/images/dialog_rt.png) !important;
+                        background: url(/images/dialog_rt.gif) no-repeat right 0;">
+                <div style="width: 13px;">
+                    <a id="A2" href="#;"></a>
+                </div>
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="13" style="background-image: url(/images/dialog_mlm.png) !important;
+                        background: url(/images/dialog_mlm.gif) repeat-y left;">
+            </td>
+            <td align="center">
+                <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff">
+                    <tr>
+                        <td>
+                            <table>
+                                <tr style="height: 5px;">
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p style="width: 50px">
+                                            卡号</p>
+                                    </td>
+                                    <td>
+                                        <input type="text" id="txtcode" style="width: 150px" />
+                                    </td>
+                                    <td>
+                                        <div style="width: 10px;">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr style="height: 5px;">
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p style="width: 50px">
+                                            姓名</p>
+                                    </td>
+                                    <td>
+                                        <input type="text" id="txtname" style="width: 150px" />
+                                    </td>
+                                    <td width="10">
+                                    </td>
+                                </tr>
+                                <tr style="height: 5px;">
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p style="width: 50px">
+                                            开始时间</p>
+                                    </td>
+                                    <td>
+                                        <input type="text" id="dtpstart" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',vel:'temp1'})"
+                                               class="Wdate" style="width: 150px" />
+                                    </td>
+                                    <td width="10">
+                                    </td>
+                                </tr>
+                                <tr style="height: 5px;">
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p style="width: 50px">
+                                            结束时间</p>
+                                    </td>
+                                    <td>
+                                        <input type="text" id="dtpend" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',vel:'temp2'})"
+                                               class="Wdate" style="width: 150px" />
+                                    </td>
+                                    <td width="10">
+                                    </td>
+                                </tr>
+                                <tr style="height: 5px;">
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p style="width: 50px">
+                                            行走速度</p>
+                                    </td>
+                                    <td>
+                                        <select id="cmbspeed" style="width: 150px;" class="cmbselect">
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </td>
+                                    <td width="10">
+                                    </td>
+                                </tr>
+                                <tr style="height: 5px;">
+                                    <td>
+                                        <input type="text" id="temp1" style="display: none;" />
+                                    </td>
+                                    <td>
+                                        <input type="text" id="temp2" style="display: none;" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <input type="button" id="btnhisgo" class="functype" value="轨迹" style="margin-left: 40px;"
+                                               onclick="hismovemethod();" />
+                                    </td>
+                                    <td>
+                                        <input type="button" id="btnhiscancel" class="functype" value="取消" onclick="cancelHisGo();" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td width="13" style="background-image: url(/images/dialog_mrm.png) !important;
+                        background: url(/images/dialog_mrm.gif) repeat-y right;">
+            </td>
+        </tr>
+        <tr>
+            <td width="13" height="13" style="background-image: url(/images/dialog_lb.png) !important;
+                        background: url(/images/dialog_lb.gif) no-repeat 0 bottom;">
+            </td>
+            <td style="background-image: url(/images/dialog_cb.png) !important; background: url(/images/dialog_cb.gif) repeat-x bottom;">
+            </td>
+            <td width="13" height="13" style="background-image: url(/images/dialog_rb.png) !important;
+                        background: url(/images/dialog_rb.gif) no-repeat right bottom;">
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

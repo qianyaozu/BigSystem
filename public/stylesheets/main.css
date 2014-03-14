@@ -1,0 +1,27 @@
+﻿body 
+{
+    margin:0;
+}
+canvas
+{
+    z-index:1; 
+}
+.leftTopDiv
+{
+    z-index:2;
+    position:absolute;
+    top:0;
+    left:0;
+}
+
+.rightTopDiv
+{ 
+    z-index:2;
+    position:absolute;
+    top:0;
+    right:0;
+}
+ul
+{
+    padding:0;
+}
