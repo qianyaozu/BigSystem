@@ -20,9 +20,6 @@ onload = function () {
     $.getJSON("webconfig.json",function(data){
         ipport=data.html;
 
-
-
-
     //禁止右键和选中
     document.oncontextmenu = new Function('event.returnValue=false;');
     document.onselectstart = new Function('event.returnValue=false;');

@@ -96,7 +96,7 @@ function StationInit() {
                 var stlist = "";
                 for (var i = 0; i < stationlist.length; i++) {
                     //将已配置的分站放入列表中
-                    if (stationlist[i].sensortype==-1)//是128分站 
+                    if (stationlist[i].sensortype==-2)//是128分站
                         stlist += "<li class='l_128'><p id='p_" + stationlist[i].id + "' >" + stationlist[i].name + "</p><input type='button' class='functype' style='width:30px;' id='btn_" + stationlist[i].id + "' onclick='deletestation(this);' value='X'/></li>";
                     else
                         stlist += "<li class='l_70'><p id='p_" + stationlist[i].id + "' >" + stationlist[i].name + "</p><input type='button' class='functype' style='width:30px;' id='btn_" + stationlist[i].id + "' onclick='deletestation(this);' value='X'/></li>";
@@ -108,7 +108,7 @@ function StationInit() {
                 stlist = "";
                 for (var i = 0; i < unstationlist.length; i++) {
                     //将未配置的分站放入列表中
-                    if (unstationlist[i].sensortype == -1)//是128分站 
+                    if (unstationlist[i].sensortype == -2)//是128分站
                         stlist += "<li class='l_128'  id='li_" + unstationlist[i].id + "'  onclick='sstation(this);' style='cursor: pointer;' > " + unstationlist[i].name + "</li>"
                     else
                         stlist += "<li class='l_70' id='li_" + unstationlist[i].id + "'  onclick='sstation(this);' style='cursor: pointer;' > " + unstationlist[i].name + "</li>"

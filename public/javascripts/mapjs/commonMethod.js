@@ -440,7 +440,7 @@ function ChangeStationVisible() {
     else if (sel.value == "1") {
         for (var i = 0; i < director.childs.length; i++) {
             if (director.childs[i].type == 1) {
-                if (director.childs[i].sensortype == -1)
+                if (director.childs[i].sensortype == -2)
                     director.childs[i].visible = true;
                 else
                     director.childs[i].visible = false;
@@ -452,7 +452,7 @@ function ChangeStationVisible() {
     else {
         for (var i = 0; i < director.childs.length; i++) {
             if (director.childs[i].type == 1) {
-                if (director.childs[i].sensortype == -1)
+                if (director.childs[i].sensortype == -2)
                     director.childs[i].visible = false;
                 else
                     director.childs[i].visible = true;
@@ -468,7 +468,7 @@ function ChangeStationVisible() {
 //设置点为蓝色
 function SetPointBlue() {
     for (var i = 0; i < director.childs.length; i++) {
-        if (director.childs[i].type == 2) {
+        if (director.childs[i].type == 2||director.childs[i].type ==1) {
             director.childs[i].color = "blue";
         }
     }

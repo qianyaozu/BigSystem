@@ -143,7 +143,7 @@ exports.savefile=function(req,res){
     var body = '';
     var header = '';
     var content_type = req.headers['content-type'];
-    var boundary = content_type.split('; ')[1].split('=')[1];
+    var boundary = content_type.split(';')[1].split('=')[1];
     var content_length = parseInt(req.headers['content-length']);
     var headerFlag = true;
     var filename = 'dummy.bin';
@@ -198,7 +198,7 @@ exports.savefile=function(req,res){
                     var data = new Data();
                     data.localname=filename;
                     data.url='upload/'+timepath+'/' + filename;
-                    data.surl='upload/'+timepath+'/s_' + filename;
+                    data.surl='upload/'+timepath+'/' + filename;
                     var result = new Result();
                     result.state = 1;
                     result. info = "";
@@ -209,7 +209,7 @@ exports.savefile=function(req,res){
         }
     })
 }
-var AllowExt=[ "amr","amr", "jpg", "jpeg", "gif", "png", "swf"];
+var AllowExt=[ "amr","arm", "jpg", "jpeg", "gif", "png", "swf"];
 
 
 exports.page404=function(req,res){
