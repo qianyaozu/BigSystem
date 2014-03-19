@@ -110,7 +110,7 @@ exports.savemap = function(req, res){
 };
 /*保存分站信息*/
 exports.savestation = function(req, res){
-    var ob=   req.body.qm;
+    var ob= req.body.qm;
     if(ob!=null)
     {
         var reqJosnData="{\"qm\":{\"QueryCondition\":[{\"Key\":\"data\",\"Value\":\""+ ob.replace(/\"/g, "")+"\"}],\"pageIndex\":0,\"rowCount\":0}}";
@@ -215,6 +215,10 @@ var AllowExt=[ "amr","arm", "jpg", "jpeg", "gif", "png", "swf"];
 exports.page404=function(req,res){
     res.render('page404');
 }
+
+
+
+
 
 ///post方法
 function httpPost(res,reqJsonData,path){

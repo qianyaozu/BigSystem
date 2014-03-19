@@ -1,0 +1,39 @@
+info: socket.io started
+Express server listening on port 3000
+socket-io listening on port 3001
+debug: client authorized
+info: handshake authorized 9Y_fh3NxaRW8gt-1tnQV
+debug: setting request GET /socket.io/1/websocket/9Y_fh3NxaRW8gt-1tnQV
+debug: set heartbeat interval for client 9Y_fh3NxaRW8gt-1tnQV
+debug: client authorized for 
+debug: websocket writing 1::
+王双雨创建连接
+debug: broadcasting packet
+debug: emitting heartbeat for client 9Y_fh3NxaRW8gt-1tnQV
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 9Y_fh3NxaRW8gt-1tnQV
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 9Y_fh3NxaRW8gt-1tnQV
+debug: set heartbeat interval for client 9Y_fh3NxaRW8gt-1tnQV
+debug: emitting heartbeat for client 9Y_fh3NxaRW8gt-1tnQV
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 9Y_fh3NxaRW8gt-1tnQV
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 9Y_fh3NxaRW8gt-1tnQV
+debug: set heartbeat interval for client 9Y_fh3NxaRW8gt-1tnQV
+info: socket.io started
+Express server listening on port 3000
+socket-io listening on port 3001
+debug: setting request GET /socket.io/1/websocket/9Y_fh3NxaRW8gt-1tnQV
+debug: set heartbeat interval for client 9Y_fh3NxaRW8gt-1tnQV
+debug: websocket writing 7:::1+0
+warn: client not handshaken client should reconnect
+info: transport end (error)
+debug: set close timeout for client 9Y_fh3NxaRW8gt-1tnQV
+debug: cleared close timeout for client 9Y_fh3NxaRW8gt-1tnQV
+debug: cleared heartbeat interval for client 9Y_fh3NxaRW8gt-1tnQV
+debug: discarding transport
+debug: got heartbeat packet
+info: socket.io started
+Express server listening on port 3000
+socket-io listening on port 3001
