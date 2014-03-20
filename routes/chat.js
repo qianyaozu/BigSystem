@@ -24,11 +24,15 @@ exports.connection=function(socket){
         var json=JSON.parse(msg);
         socket.name=json.card;
         isExists(json,socket); //加入连接列表
-        socket.broadcast.emit('in',msg);//通知用户登入
+        socket.broadcast.emit('in','{"data":'+msg+'}');//通知用户登入
         socket.emit('emplist','{"data":'+ BroadCastPeopleList()+'}');//获取用户列表
 
         OffLineMessage(socket,json); //拉取离线消息
 
+    });
+    //接收消息事件
+    socket.on('emplist', function (msg) {
+        socket.emit('emplist','{"data":'+ BroadCastPeopleList()+'}');//获取用户列表
     });
     //接收消息事件
     socket.on('message', function (msg) {
@@ -37,7 +41,7 @@ exports.connection=function(socket){
 
     //断开连接事件
     socket.on('disconnect', function () {
-        socket.broadcast.emit('out',socket.name);
+        socket.broadcast.emit('out','{"data":'+socket.name+'}');
         Exit(socket);
     });
 }
@@ -50,6 +54,21 @@ function isExists(json,socket){
     {
         if(allempList[i].card== json.card)//如果存在则 认为在线
         {
+            //判断如果卡号更改了人员或者部门则要刷新
+            if(allempList[i].name!=json.name||allempList[i].dept!=json.dept)
+            {
+                allempList[i].name=json.name;
+                allempList[i].dept=json.dept;
+                var arr=[];
+                for(var j=0;j<allempList.length;j++)
+                {
+                    arr.push(new EmpListEasy(allempList[i]));
+                }
+                if(arr!=null)
+                {
+                    fs.writeFileSync(__dirname + '/../public/chatfiles/emplist.json',JSON.stringify(arr));
+                }
+            }
             allempList[i].socket=socket;
             allempList[i].online=true;
             bo = true;
@@ -57,29 +76,17 @@ function isExists(json,socket){
         }
     }
     if(!bo){
-        var v = new EmpList();
-        v.card= json.card;
-        v.name=json.name;
-        v.dept=json.dept;
-        v.online=true;
-        v.socket=socket;
-        allempList.push(v);
+        allempList.push(new EmpList( json.card, json.name, json.dept,true,socket));
 
         var arr=[];
         for(var j=0;j<allempList.length;j++)
         {
-            var vv=new   EmpListEasy();
-            vv.card=allempList[j].card;
-            vv.name=allempList[j].name;
-            vv.dept=allempList[j].dept;
-            arr.push(vv);
+            arr.push(new EmpListEasy(allempList[i]));
         }
         if(arr!=null)
         {
             fs.writeFileSync(__dirname + '/../public/chatfiles/emplist.json',JSON.stringify(arr));
         }
-
-
     }
     console.log(JSON.stringify(json) +'创建连接');
 }
@@ -104,12 +111,7 @@ function BroadCastPeopleList(){
     var arr=[];
     for(var i=0;i<allempList.length;i++)
     {
-        var v=new EmpListEasy();
-        v.card=allempList[i].card;
-        v.name=allempList[i].name;
-        v.dept=allempList[i].dept;
-        v.online=allempList[i].online;
-        arr.push(v);
+        arr.push(new EmpListEasy(allempList[i]));
     }
      return JSON.stringify(arr);
 }
@@ -120,16 +122,11 @@ function BroadCastPeopleList(){
 function OnMessage(socket,msg){
     var message = JSON.parse(msg);
     if(message!=null){
-        var m=new  MessageModel();
-        m.from=message.from;
-        m.to=message.to;
-        m.body=message.body;
-        m.time=new Date();
-        var info=JSON.stringify(m);
+        var info=JSON.stringify(new  MessageModel(message));
         console.log('接收信息 ', info);
         if(message.to=="")//广播发送信息
         {
-            socket.broadcast.emit('message',info);
+            socket.broadcast.emit('message','{"data":'+info+'}');
         }
         else
         {
@@ -139,16 +136,26 @@ function OnMessage(socket,msg){
                 {
                     if(allempList[i].online)
                     {
-                        allempList[i].socket.emit('message',info);
+                        allempList[i].socket.emit('message','{"data":'+info+'}');
                     }
                     else{
-                        if(!fs.exists(__dirname + '/../public/chatfiles/'+allempList[i].card+'.json'))
+                        if(!fs.existsSync(__dirname + '/../public/chatfiles/'+allempList[i].card+'.json'))
                         {
-                            fs.writeFileSync(__dirname + '/../public/chatfiles/'+allempList[i].card+'.json',info+'||');
+                            fs.writeFile(__dirname + '/../public/chatfiles/'+allempList[i].card+'.json',info+'||',  function(err){
+                                if(err)
+                                {
+                                    console.log(err);
+                                }
+                            });
                         }
                         else{
-                            fs.appendFileSync(__dirname + '/../public/chatfiles/'+allempList[i].card+'.json',info+'||');
-                        }
+                            fs.appendFile(__dirname + '/../public/chatfiles/'+allempList[i].card+'.json',info+'||',  function(err){
+                                if(err)
+                                {
+                                    console.log(err);
+                                }
+                            } );
+                         }
                     }
                     break;
                 }
@@ -162,7 +169,6 @@ function readAllEmpList(){
     var fs = require('fs');
     var path = require('path');
     var arr=[];
-
     var data=   fs.readFileSync(__dirname + '/../public/chatfiles/emplist.json');
     if(data!=null&&data!="" )
     {
@@ -171,13 +177,7 @@ function readAllEmpList(){
         {
             for(var i=0;i<json.length;i++)
             {
-                var v = new EmpList();
-                v.card= json[i].card;
-                v.name=json[i].name;
-                v.dept=json[i].dept;
-                v.online=false;
-                v.socket=null;
-                arr.push(v);
+                arr.push(new EmpList(json[i].card,json[i].name,json[i].dept,false,null));
             }
         }
     }
@@ -186,9 +186,9 @@ function readAllEmpList(){
 
 //拉取离线消息
 function OffLineMessage(socket,json){
-    if(fs.exists(__dirname + '/../public/chatfiles/'+json.card+'.json'))
+    if(fs.existsSync(__dirname + '/../public/chatfiles/'+json.card+'.json'))
     {
-        var info=  fs.readFileSync(__dirname + '/../public/chatfiles/'+json.card+'.json');
+        var info=  fs.readFileSync(__dirname + '/../public/chatfiles/'+json.card+'.json', 'utf-8');
         if(info!="")
         {
             var strarr=   info.split("||");
@@ -196,12 +196,13 @@ function OffLineMessage(socket,json){
             for(var i=0;i<strarr.length;i++)
             {
                 if(strarr[i]!=""){
-                  var v=new  OffLineModel();
-                    v.data=strarr[i];
-                    arr.push(v);
+                  var v=[];
+                    //v.data=;
+                    arr.push(strarr[i]);
                 }
             }
-            socket.emit('offline',JSON.stringify(arr));//发送离线消息
+            socket.emit('offline','{"data":'+JSON.stringify(arr).replace(/\\/g, "")+'}');//发送离线消息
+            fs.writeFile(__dirname + '/../public/chatfiles/'+json.card+'.json','',null);
            // fs.unlinkSync(__dirname + '/../public/chatfiles/'+json.card+'.json');//删除离线文件
         }
     }
@@ -209,29 +210,32 @@ function OffLineMessage(socket,json){
 
 
 /***************实体类********************/
-function EmpListEasy(){
-    this.card = 0;
-    this.name = "";
-    this.dept = "";
-    this.online=false;
+function EmpListEasy(list){
+    this.card =list.card;
+    this.name =list.name;
+    this.dept = list.dept;
+    this.online=list.online;
 }
-function EmpList(){
-    this.card = 0;
-    this.name = "";
-    this.dept = "";
-    this.online = false;
-    this.socket = null;
-}
-function MessageModel(){
-    this.from="";
-    this.to="";
-    this.body="";
-    this.time="";
+function EmpList(card,name,dept,online,socket){
+    this.card = card;
+    this.name = name;
+    this.dept = dept;
+    this.online = online;
+    this.socket = socket;
 }
 
-function OffLineModel(){
-    this.data="";
+function MessageModel(message){
+    this.from=message.from;
+    this.to=message.to;
+    this.body=message.body;
+    this.time=new Date();
+    this.name=message.name;
+    this.dept=message.dept;
+    this.type=message.type;
+    this.filetype=message.filetype;
 }
+
+
 
 /***************公共方法********************/
 //删除array中项　根据索引
