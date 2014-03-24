@@ -1,20 +1,20 @@
 var fs = require('fs');
 var path = require('path');
-/*
- * GET home page.
- */
+//许可的后缀名
+var AllowExt=[ "amr", "jpg", "jpeg", "gif", "png", "swf"];
+var ImageExt=[ "jpg", "jpeg", "gif", "png"];
+var exec = require('child_process').exec;
 
+//打开索引页，demo
 exports.index = function(req, res){
   res.render('index', { title: 'Express' });
 };
-
+//打开地图页面
 exports.map = function(req, res){
     res.render('map');
 };
 
-/*
- * 获取地图信息
- */
+/*获取地图信息 */
 exports.getmap = function(req, res){
     var name="";
     var r = new Result();
@@ -54,8 +54,6 @@ exports.getmap = function(req, res){
     res.write( JSON.stringify(r));
     res.end();
 };
-
-
 /*保存地图信息*/
 exports.savemap = function(req, res){
     var body = '';
@@ -136,8 +134,6 @@ exports.saveline = function(req, res){
     }
 };
 
-
-
 //保存文件
 exports.savefile=function(req,res){
     var body = '';
@@ -181,8 +177,8 @@ exports.savefile=function(req,res){
         {
             fs.mkdirSync(__dirname+'/../public/upload/'+timepath);
         }
-        var ext=filename.split('.')[1];
-        if(AllowExt.indexOf(ext)==-1)//不允许的后缀名文件
+        var ext = filename.split('.')[1];
+        if(AllowExt.indexOf(ext) == -1)//不允许的后缀名文件
         {
             var result = new Result();
             result.state = 0;
@@ -193,32 +189,48 @@ exports.savefile=function(req,res){
         }
         else
         {
-                fs.writeFile(__dirname+'/../public/upload/'+timepath+'/' + filename, body, 'binary',  function(){
-                    // writestream.end();
-                    var data = new Data();
-                    data.localname=filename;
-                    data.url='upload/'+timepath+'/' + filename;
-                    data.surl='upload/'+timepath+'/' + filename;
-                    var result = new Result();
-                    result.state = 1;
-                    result. info = "";
-                    result.data = data;
+            fs.writeFile(__dirname+'/../public/upload/'+timepath+'/' + filename, body, 'binary',function(){
+                var data = new Data();//返回body数据
+                data.localname=filename;
+                data.url='upload/'+timepath+'/' + filename;
+                data.surl='';
+                var result = new Result();//返回的数据包，包含头
+                result.state = 1;
+                result.info = "";
+                result.data = data;
+                if(ImageExt.indexOf(ext)!=-1)//图片文件则保存缩略图
+                {
+                    data.surl='upload/'+timepath+'/s_' + filename;
+                    //生成缩略图
+                    exec(__dirname+'/../ImageMagick/convert -resize 100 '+__dirname+'/../public/'+data.url +' '+__dirname+'/../public/'+ data.surl , function(err){
+                        if(err){
+                            result.state = 0;
+                            result. info = "生成缩略图失败："+err;
+                            result.data = null;
+                            res.write(JSON.stringify(result));
+                            res.end();
+                        }
+                        else{
+                            res.write(JSON.stringify(result));
+                            res.end();
+                        }
+                    });
+                }
+                else
+                {
                     res.write(JSON.stringify(result));
                     res.end();
+                }
+
             });
         }
     })
 }
-var AllowExt=[ "amr","arm", "jpg", "jpeg", "gif", "png", "swf"];
 
-
+//404页面
 exports.page404=function(req,res){
     res.render('page404');
 }
-
-
-
-
 
 ///post方法
 function httpPost(res,reqJsonData,path){
@@ -249,7 +261,6 @@ function httpPost(res,reqJsonData,path){
                 res.send(d);
             });
         });
-        // write the json data
         // 发送REST请求时传入JSON数据
         reqPost.write(reqJsonData);
         reqPost.end();
@@ -260,8 +271,8 @@ function httpPost(res,reqJsonData,path){
 }
 
 
-function CurentTime()
-{
+//获取当前日期作为文件夹名称
+function CurentTime(){
     var now = new Date();
     var year = now.getFullYear();       //年
     var month = now.getMonth() + 1;     //月
@@ -276,13 +287,14 @@ function CurentTime()
     return(clock);
 }
 
-
+//返回包的实体类
 function Result()
 {
     this.state=1;
     this.info="";
     this.data=null;
 }
+//返回包中的body数据
 function Data(){
     this.localname="";
     this.url="";
