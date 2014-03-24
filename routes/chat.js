@@ -77,7 +77,6 @@ function isExists(json,socket){
     }
     if(!bo){
         allempList.push(new EmpList( json.card, json.name, json.dept,true,socket));
-
         var arr=[];
         for(var j=0;j<allempList.length;j++)
         {
@@ -115,8 +114,6 @@ function BroadCastPeopleList(){
     }
      return JSON.stringify(arr);
 }
-
-
 
 ///发送信息
 function OnMessage(socket,msg){
@@ -191,13 +188,11 @@ function OffLineMessage(socket,json){
         var info=  fs.readFileSync(__dirname + '/../public/chatfiles/'+json.card+'.json', 'utf-8');
         if(info!="")
         {
-            var strarr=   info.split("||");
+            var strarr = info.split("||");
             var arr=[];
             for(var i=0;i<strarr.length;i++)
             {
                 if(strarr[i]!=""){
-                  var v=[];
-                    //v.data=;
                     arr.push(strarr[i]);
                 }
             }
